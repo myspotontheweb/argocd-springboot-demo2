@@ -20,8 +20,6 @@ cat <<END > values.yaml
 controller:
    ingress:
        enabled: true
-       paths: []
-       apiVersion: "extensions/v1beta1"
        hostName: jenkins.$(kubectl -n kube-system get service traefik -oyaml | yq .status.loadBalancer.ingress[0].ip).nip.io
 END
 
