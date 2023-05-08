@@ -37,7 +37,7 @@ spec:
             steps {
                 container("docker") {
                     // git checkout
-                    git url: 'https://github.com/myspotontheweb/gitops-demo-app1', branch: 'main'
+                    git url: 'https://github.com/myspotontheweb/argocd-springboot-demo2.git', branch: 'main'
                     // Build + Push image
                     sh "docker buildx build -t ${REG_HOST}/${IMAGE_REPO}:${IMAGE_TAG} . --push"
                 }
