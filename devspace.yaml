@@ -1,0 +1,54 @@
+version: v2beta1
+name: springboot-demo2
+
+# This is a list of `images` that DevSpace can build for this project
+# We recommend to skip image building during development (devspace dev) as much as possible
+images:
+  app:
+    image: ghcr.io/myspotontheweb/argocd-workloads-demo/pre-prod/demo2
+    buildKit:
+      inCluster: {}
+
+# This is a list of `deployments` that DevSpace can create for this project
+deployments:
+  app:
+    # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+    helm:
+      # We are deploying this project with the Helm chart you provided
+      chart:
+        name: ./chart
+      # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+      # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+      values:
+        image:
+          repository: ${runtime.images.app.image}
+          tag: ${runtime.images.app.tag}
+
+# This is a list of `dev` containers that are based on the containers created by your deployments
+dev:
+  app:
+    imageSelector: ghcr.io/myspotontheweb/argocd-workloads-demo/pre-prod/demo2
+    # Replace the container image with this dev-optimized image (allows to skip image building during development)
+    devImage: ghcr.io/loft-sh/devspace-containers/java-maven:3-openjdk-17-slim
+    # Sync files between the local filesystem and the development container
+    sync:
+      - path: ./
+        uploadExcludeFile: .dockerignore
+    # Open a terminal and use the following command to start it
+    terminal:
+      command: ./devspace_start.sh
+    # Inject a lightweight SSH server into the container (so your IDE can connect to the remote dev env)
+    ssh:
+      enabled: true
+    # Make the following commands from my local machine available inside the dev container
+    proxyCommands:
+      - command: devspace
+      - command: kubectl
+      - command: helm
+      - gitCredentials: true
+    # Forward the following ports to be able access your application via localhost
+    ports:
+      - port: "8080"
+    # Open the following URLs once they return an HTTP status code other than 502 or 503
+    open:
+      - url: http://localhost:8080
