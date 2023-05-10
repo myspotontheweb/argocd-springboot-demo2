@@ -18,9 +18,43 @@ k3d cluster create jenkins-cluster --agents=2
 #
 cat <<END > values.yaml
 controller:
-   ingress:
-       enabled: true
-       hostName: jenkins.$(kubectl -n kube-system get service traefik -oyaml | yq .status.loadBalancer.ingress[0].ip).nip.io
+  ingress:
+    enabled: true
+    hostName: jenkins.$(kubectl -n kube-system get service traefik -oyaml | yq .status.loadBalancer.ingress[0].ip).nip.io
+
+  installPlugins:
+    - javax-mail-api:1.6.2-9
+    - kubernetes:3923.v294a_d4250b_91
+
+  additionalPlugins:
+    - job-dsl:1.83
+
+  JCasC:
+    defaultConfig: true
+    configScripts:
+      welcome-message: |
+        jenkins:
+          systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
+      pipeline-job: |
+        jobs:
+          - script: >
+              pipelineJob('argocd-springboot-demo2') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/myspotontheweb/argocd-springboot-demo2')
+                          //credentials('bitBucketUser')
+                        }
+                        branch('*/main')
+                      }
+                    }
+                    scriptPath("Jenkinsfile")
+                    lightweight()
+                  }
+                }
+              }
 END
 
 #
