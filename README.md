@@ -12,10 +12,9 @@ k3d cluster create jenkins-cluster --agents=2
 
 ## Deploy Jenkins
 
+Generate configuration file
+
 ```
-#
-# Configuration
-#
 cat <<END > values.yaml
 controller:
   ingress:
@@ -56,10 +55,11 @@ controller:
                 }
               }
 END
+```
 
-#
-# Deploy helm chart
-#
+Install helm chart
+
+```
 helm upgrade jenkins jenkins --install --repo https://charts.jenkins.io -n jenkins --create-namespace -f values.yaml
 ```
 
