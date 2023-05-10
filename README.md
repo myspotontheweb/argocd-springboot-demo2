@@ -2,7 +2,7 @@
 
 Spring Boot demo application - Using Jenkins for CI
 
-# Quick
+# Quick start
 
 ## Start a cluster
 
@@ -72,17 +72,6 @@ kubectl create serviceaccount k8s-builder -n jenkins
 kubectl create rolebinding k8s-builder --clusterrole k8s-builder --serviceaccount=jenkins:k8s-builder -n jenkins
 ```
 
-Login details:
-
-```
-cat <<END
-
-http://$(helm -n jenkins get values jenkins | yq .controller.ingress.hostName)
-
-$(kubectl -n jenkins get secrets jenkins -ogo-template='{{printf "user: admin\npass: %s\n" (index .data "jenkins-admin-password"|base64decode)}}')
-END
-```
-
 Build secrets
 
 ```
@@ -97,3 +86,15 @@ kubectl -n jenkins create secret generic docker-password --from-literal text=$PA
 kubectl -n jenkins label secret docker-password jenkins.io/credentials-type=secretText
 kubectl -n jenkins annotate secret docker-password jenkins.io/credentials-description="Password to access docker registry"
 ```
+
+## Login
+
+```
+cat <<END
+
+http://$(helm -n jenkins get values jenkins | yq .controller.ingress.hostName)
+
+$(kubectl -n jenkins get secrets jenkins -ogo-template='{{printf "user: admin\npass: %s\n" (index .data "jenkins-admin-password"|base64decode)}}')
+END
+```
+
