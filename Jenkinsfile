@@ -17,8 +17,8 @@ spec:
     }
     environment {
         REG_HOST = "ghcr.io"
-        REG_USER = credentials('ARGOCD_WORKLOADS_DEMO_DOCKER_USERNAME')
-        REG_PASS = credentials('ARGOCD_WORKLOADS_DEMO_DOCKER_PASSWORD')
+        REG_USER = credentials('docker-username')
+        REG_PASS = credentials('docker-password')
         IMAGE_REPO = 'myspotontheweb/argocd-workloads-demo/pre-prod/demo2'
         IMAGE_TAG  = '1.0.0'
     }
