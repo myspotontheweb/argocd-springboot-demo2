@@ -20,19 +20,12 @@ controller:
   ingress:
     enabled: true
     hostName: jenkins.$(kubectl -n kube-system get service traefik -oyaml | yq .status.loadBalancer.ingress[0].ip).nip.io
-
   additionalPlugins:
     - job-dsl:1.83
     - kubernetes-credentials-provider:1.211.vc236a_f5a_2f3c
-
   JCasC:
     defaultConfig: true
-
-
     configScripts:
-      welcome-message: |
-        jenkins:
-          systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
       pipeline-job: |
         jobs:
           - script: >
