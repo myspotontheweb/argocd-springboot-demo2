@@ -21,10 +21,6 @@ controller:
     enabled: true
     hostName: jenkins.$(kubectl -n kube-system get service traefik -oyaml | yq .status.loadBalancer.ingress[0].ip).nip.io
 
-  installPlugins:
-    - javax-mail-api:1.6.2-9
-    - kubernetes:3923.v294a_d4250b_91
-
   additionalPlugins:
     - job-dsl:1.83
 
