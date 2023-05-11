@@ -21,8 +21,8 @@ controller:
     enabled: true
     hostName: jenkins.$(kubectl -n kube-system get service traefik -oyaml | yq .status.loadBalancer.ingress[0].ip).nip.io
   additionalPlugins:
-    - job-dsl:1.83
-    - kubernetes-credentials-provider:1.211.vc236a_f5a_2f3c
+    - job-dsl:latest
+    - kubernetes-credentials-provider:latest
   JCasC:
     defaultConfig: true
     configScripts:
