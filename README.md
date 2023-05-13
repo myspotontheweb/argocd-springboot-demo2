@@ -29,20 +29,16 @@ controller:
       pipeline-job: |
         jobs:
           - script: >
-              pipelineJob('argocd-springboot-demo2') {
-                definition {
-                  cpsScm {
-                    scm {
-                      git {
-                        remote {
-                          url('https://github.com/myspotontheweb/argocd-springboot-demo2')
-                          //credentials('bitBucketUser')
-                        }
-                        branch('*/main')
-                      }
-                    }
-                    scriptPath("Jenkinsfile")
-                    lightweight()
+              multibranchPipelineJob('myspotontheweb-argocd-springboot-demo2') {
+                branchSources {
+                  git {
+                    id('myspotontheweb-argocd-springboot-demo2')
+                    remote('https://github.com/myspotontheweb/argocd-springboot-demo2.git')
+                  }
+                }
+                orphanedItemStrategy {
+                  discardOldItems {
+                    numToKeep(20)
                   }
                 }
               }
