@@ -29,10 +29,10 @@ controller:
       pipeline-job: |
         jobs:
           - script: >
-              multibranchPipelineJob('myspotontheweb-argocd-springboot-demo2') {
+              multibranchPipelineJob('argocd-springboot-demo2') {
                 branchSources {
                   git {
-                    id('myspotontheweb-argocd-springboot-demo2')
+                    id('argocd-springboot-demo2')
                     remote('https://github.com/myspotontheweb/argocd-springboot-demo2.git')
                   }
                 }
