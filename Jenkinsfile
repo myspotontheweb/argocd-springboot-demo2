@@ -36,7 +36,13 @@ spec:
 
         stage('Build CI image') {
             when {
-                branch "main"
+                allOf {
+                    branch "main"
+                    not {
+                        buildingTag()
+                    }
+                }
+                
             }
             environment {
                 IMAGE_TAG = "${GIT_COMMIT}"
