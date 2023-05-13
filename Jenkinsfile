@@ -38,12 +38,7 @@ spec:
 
         stage('Build CI image') {
             when {
-                allOf {
-                    branch('main')
-                    not {
-                        buildingTag()
-                    }
-                }
+                branch('main')
             }
             environment {
                 IMAGE_TAG = "${GIT_COMMIT}"
@@ -57,10 +52,7 @@ spec:
 
         stage('Build Release Candidate') {
             when {
-                allOf {
-                    branch('main')
-                    buildingTag()
-                }
+                buildingTag()
             }
             environment {
                 IMAGE_TAG = "${GIT_COMMIT}"
