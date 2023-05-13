@@ -20,9 +20,9 @@ spec:
         REG_USER = credentials('docker-username')
         REG_PASS = credentials('docker-password')
         IMAGE_REPO = 'myspotontheweb/argocd-workloads-demo/pre-prod/demo2'
-        IMAGE_TAG  = '1.0.0'
     }
     stages {
+
         stage('Setup') {
             steps {
                 container("docker") {
@@ -30,15 +30,43 @@ spec:
                     sh "docker buildx create --name k8s-builder --driver kubernetes --driver-opt replicas=1 --use"
                     // Registry login
                     sh 'echo $REG_PASS | docker login ${REG_HOST} --username ${REG_USER} --password-stdin'
+                    // git checkout
+                    git url: 'https://github.com/myspotontheweb/argocd-springboot-demo2.git', branch: 'main'
                 }
             }
         }
-        stage('Build') {
+
+        stage('Build CI image') {
+            when {
+                allOf {
+                    branch('main')
+                    not {
+                        buildingTag()
+                    }
+                }
+            }
+            environment {
+                IMAGE_TAG = ${GIT_COMMIT}
+            }
             steps {
                 container("docker") {
-                    // git checkout
-                    git url: 'https://github.com/myspotontheweb/argocd-springboot-demo2.git', branch: 'main'
-                    // Build + Push image
+                    sh "docker buildx build -t ${REG_HOST}/${IMAGE_REPO}:${IMAGE_TAG} . --push"
+                }
+            }
+        }
+
+        stage('Build Release Candidate') {
+            when {
+                allOf {
+                    branch('main')
+                    buildingTag()
+                }
+            }
+            environment {
+                IMAGE_TAG = ${GIT_COMMIT}
+            }
+            steps {
+                container("docker") {
                     sh "docker buildx build -t ${REG_HOST}/${IMAGE_REPO}:${IMAGE_TAG} . --push"
                 }
             }
