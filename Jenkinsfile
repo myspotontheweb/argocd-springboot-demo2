@@ -46,7 +46,7 @@ spec:
                 }
             }
             environment {
-                IMAGE_TAG = ${GIT_COMMIT}
+                IMAGE_TAG = "${GIT_COMMIT}"
             }
             steps {
                 container("docker") {
@@ -63,7 +63,7 @@ spec:
                 }
             }
             environment {
-                IMAGE_TAG = ${GIT_COMMIT}
+                IMAGE_TAG = "${GIT_COMMIT}"
             }
             steps {
                 container("docker") {
