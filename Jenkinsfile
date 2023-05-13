@@ -30,8 +30,6 @@ spec:
                     sh "docker buildx create --name k8s-builder --driver kubernetes --driver-opt replicas=1 --use"
                     // Registry login
                     sh 'echo $REG_PASS | docker login ${REG_HOST} --username ${REG_USER} --password-stdin'
-                    // git checkout
-                    git url: 'https://github.com/myspotontheweb/argocd-springboot-demo2.git', branch: 'main'
                 }
             }
         }
