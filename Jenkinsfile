@@ -36,7 +36,9 @@ spec:
 
         stage('Build CI image') {
             when { 
-                branch pattern: "main", comparator: "EQUAL"
+                when { 
+                    branch "main" 
+                }
             }
             environment {
                 IMAGE_TAG = "${GIT_COMMIT}"
