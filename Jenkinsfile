@@ -37,8 +37,10 @@ spec:
         }
 
         stage('Build CI image') {
-            when { 
-                branch "main" 
+            when {
+                expression {
+                    return sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim() == "main"
+                }
             }
             environment {
                 IMAGE_TAG = "${GIT_COMMIT}"
