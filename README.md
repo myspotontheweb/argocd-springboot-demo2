@@ -88,9 +88,13 @@ kubectl create clusterrolebinding jenkinsrolebinding --clusterrole=cluster-admin
 Configure [Build secrets](https://github.com/jenkinsci/kubernetes-credentials-provider-plugin)
 
 ```
-USER=XXXXXXXXXXXXXXXX
-PASS=YYYYYYYYYYYYYYYY
+DOCKER_USER=XXXXXXXXXXXXXXXX
+DOCKER_PASS=YYYYYYYYYYYYYYYY
+GITOPS_TOKEN=ZZZZZZZZZZZZZZZ
+```
 
+Generate secrets
+```
 kubectl -n jenkins create secret generic docker-username --from-literal text=$USER
 kubectl -n jenkins label secret docker-username jenkins.io/credentials-type=secretText
 kubectl -n jenkins annotate secret docker-username jenkins.io/credentials-description="Username to access docker registry"
@@ -98,6 +102,10 @@ kubectl -n jenkins annotate secret docker-username jenkins.io/credentials-descri
 kubectl -n jenkins create secret generic docker-password --from-literal text=$PASS
 kubectl -n jenkins label secret docker-password jenkins.io/credentials-type=secretText
 kubectl -n jenkins annotate secret docker-password jenkins.io/credentials-description="Password to access docker registry"
+
+kubectl -n jenkins create secret generic gitops-trigger-token --from-literal text=$GITOPS_TOKEN
+kubectl -n jenkins label secret gitops-trigger-token jenkins.io/credentials-type=secretText
+kubectl -n jenkins annotate secret gitops-trigger-token jenkins.io/credentials-description="Token used to trigger GH action"
 ```
 
 ## Login
