@@ -14,11 +14,11 @@ spec:
       tty: true
     - name: helm
       image: alpine/helm:3.12.0
-      entrypoint: cat
+      command: cat
       tty: true
     - name: gh
       image: maniator/gh:v2.29.0
-      entrypoint: cat
+      commandq: cat
       tty: true
 '''
         }
