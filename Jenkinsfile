@@ -59,7 +59,7 @@ spec:
                 buildingTag()
             }
             environment {
-                IMAGE_TAG = "${GIT_COMMIT}"
+                IMAGE_TAG = "${TAG_NAME}"
             }
             steps {
                 container("docker") {
