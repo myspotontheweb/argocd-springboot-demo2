@@ -39,6 +39,13 @@ controller:
                         traits {
                           gitBranchDiscovery()
                           gitTagDiscovery()
+                          cloneOption {
+                            extension {
+                            noTags(false)
+                            shallow(true)
+                            reference("")
+                            timeout(2)
+                          }
                         }
                       }
                     }
