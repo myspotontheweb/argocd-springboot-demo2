@@ -25,7 +25,7 @@ spec:
         REG_USER = credentials('docker-username')
         REG_PASS = credentials('docker-password')
         APP_REPO = "${REGISTRY}/myspotontheweb/argocd-workloads-demo/pre-prod"
-        APP_NAME = demo2
+        APP_NAME = "demo2"
     }
     stages {
 
@@ -81,7 +81,7 @@ spec:
 
         stage('Sync with gitops repo') {
             environment {
-                GITHUB_TOKEN: credentials('gitops-trigger-token')
+                GITHUB_TOKEN = credentials('gitops-trigger-token')
             }
             steps {
                 container("gh") {
