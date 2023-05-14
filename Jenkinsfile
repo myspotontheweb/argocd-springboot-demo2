@@ -26,10 +26,10 @@ spec:
         }
     }
     environment {
-        REGISTRY = "ghcr.io"
-        REG_USER = credentials('docker-username')
-        REG_PASS = credentials('docker-password')
-        APP_REPO = "${REGISTRY}/myspotontheweb/argocd-workloads-demo/pre-prod"
+        DOCKER_REGISTRY = "ghcr.io"
+        DOCKER_USERNAME = credentials('docker-username')
+        DOCKER_PASSWORD = credentials('docker-password')
+        APP_REPO = "${DOCKER_REGISTRY}/myspotontheweb/argocd-workloads-demo/pre-prod"
         APP_NAME = "demo2"
     }
     stages {
@@ -40,7 +40,7 @@ spec:
                     // Configure the kubernetes builder
                     sh "docker buildx create --name k8s-builder --driver kubernetes --driver-opt replicas=1 --use"
                     // Registry login
-                    sh 'docker login ${REGISTRY} --username ${REG_USER} --password ${REG_PASS}'
+                    sh 'echo ${DOCKER_PASSWORD} | docker login ${DOCKER_REGISTRY} --username ${DOCKER_USERNAME} --password-stdin'
                 }
             }
         }
@@ -55,12 +55,9 @@ spec:
                 }
                 
             }
-            environment {
-                IMAGE_TAG = "${GIT_COMMIT}"
-            }
             steps {
                 container("docker") {
-                    sh "docker buildx build -t ${APP_REPO}/${APP_NAME}:${IMAGE_TAG} . --push"
+                    sh "docker buildx build -t ${APP_REPO}/${APP_NAME}:${GIT_COMMIT} . --push"
                 }
             }
         }
@@ -70,16 +67,15 @@ spec:
                 buildingTag()
             }
             environment {
-                IMAGE_TAG = "${TAG_NAME}"
                 VERSION   = env.TAG_NAME.replaceAll('v','')
             }
             steps {
                 container("docker") {
-                    sh "docker buildx build -t ${APP_REPO}/${APP_NAME}:${IMAGE_TAG} . --push"
+                    sh "docker buildx build -t ${APP_REPO}/${APP_NAME}:${VERSION} . --push"
                 }
                 container("helm") {
-                    sh "helm package chart --version ${VERSION} --app-version ${IMAGE_TAG} --dependency-update"
-                    sh "helm push ${env.APP_NAME}-${VERSION}.tgz oci://${APP_REPO}/charts"
+                    sh "helm package chart --version ${VERSION} --app-version ${VERSION} --dependency-update"
+                    sh "helm push ${APP_NAME}-${VERSION}.tgz oci://${APP_REPO}/charts"
                 }
             }
         }
