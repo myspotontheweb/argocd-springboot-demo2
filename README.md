@@ -41,10 +41,11 @@ controller:
                           gitTagDiscovery()
                           cloneOption {
                             extension {
-                            noTags(false)
-                            shallow(true)
-                            reference("")
-                            timeout(2)
+                              noTags(false)
+                              shallow(true)
+                              reference("")
+                              timeout(2)
+                            }
                           }
                         }
                       }
