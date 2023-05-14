@@ -31,9 +31,17 @@ controller:
           - script: >
               multibranchPipelineJob('argocd-springboot-demo2') {
                 branchSources {
-                  git {
-                    id('argocd-springboot-demo2')
-                    remote('https://github.com/myspotontheweb/argocd-springboot-demo2.git')
+                  branchSource {
+                    source {
+                      git {
+                        id('argocd-springboot-demo2')
+                        remote('https://github.com/myspotontheweb/argocd-springboot-demo2.git')
+                        traits {
+                          gitBranchDiscovery()
+                          gitTagDiscovery()
+                        }
+                      }
+                    }
                   }
                 }
                 orphanedItemStrategy {
