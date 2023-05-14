@@ -74,6 +74,7 @@ spec:
                     sh "docker buildx build -t ${APP_REPO}/${APP_NAME}:${VERSION} . --push"
                 }
                 container("helm") {
+                    sh "echo ${DOCKER_PASSWORD} | helm registry login ${DOCKER_REGISTRY} --username ${DOCKER_USERNAME} --password-stdin"
                     sh "helm package chart --version ${VERSION} --app-version ${VERSION} --dependency-update"
                     sh "helm push ${APP_NAME}-${VERSION}.tgz oci://${APP_REPO}/charts"
                 }
