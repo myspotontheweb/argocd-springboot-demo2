@@ -66,7 +66,7 @@ spec:
             }
             environment {
                 IMAGE_TAG = "${TAG_NAME}"
-                VERSION   = "$(TAG_NAME#v)"
+                VERSION   = env.TAG_NAME.replaceAll('v','')
             }
             steps {
                 container("docker") {
