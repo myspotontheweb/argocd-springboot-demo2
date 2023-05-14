@@ -40,7 +40,7 @@ spec:
                     // Configure the kubernetes builder
                     sh "docker buildx create --name k8s-builder --driver kubernetes --driver-opt replicas=1 --use"
                     // Registry login
-                    sh 'echo $REG_PASS | docker login ${REGISTRY} --username ${REG_USER} --password-stdin'
+                    sh 'docker login ${REGISTRY} --username ${REG_USER} --password ${REG_PASS}'
                 }
             }
         }
