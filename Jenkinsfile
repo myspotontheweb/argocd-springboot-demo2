@@ -12,14 +12,20 @@ spec:
     - name: docker
       image: docker:23.0.4-cli
       tty: true
+    - name: helm
+      image: alpine/helm:3.12.0
+    - name: gh
+      image: maniator/gh:v2.29.0
+      tty: true
 '''
         }
     }
     environment {
-        REG_HOST = "ghcr.io"
+        REGISTRY = "ghcr.io"
         REG_USER = credentials('docker-username')
         REG_PASS = credentials('docker-password')
-        IMAGE_REPO = 'myspotontheweb/argocd-workloads-demo/pre-prod/demo2'
+        APP_REPO = "${REGISTRY}/myspotontheweb/argocd-workloads-demo/pre-prod"
+        APP_NAME = demo2
     }
     stages {
 
@@ -29,7 +35,7 @@ spec:
                     // Configure the kubernetes builder
                     sh "docker buildx create --name k8s-builder --driver kubernetes --driver-opt replicas=1 --use"
                     // Registry login
-                    sh 'echo $REG_PASS | docker login ${REG_HOST} --username ${REG_USER} --password-stdin'
+                    sh 'echo $REG_PASS | docker login ${REGISTRY} --username ${REG_USER} --password-stdin'
                 }
             }
         }
@@ -49,7 +55,7 @@ spec:
             }
             steps {
                 container("docker") {
-                    sh "docker buildx build -t ${REG_HOST}/${IMAGE_REPO}:${IMAGE_TAG} . --push"
+                    sh "docker buildx build -t ${APP_REPO}/${APP_NAME}:${IMAGE_TAG} . --push"
                 }
             }
         }
@@ -60,11 +66,28 @@ spec:
             }
             environment {
                 IMAGE_TAG = "${TAG_NAME}"
+                VERSION   = "$(TAG_NAME#v)"
             }
             steps {
                 container("docker") {
-                    sh "docker buildx build -t ${REG_HOST}/${IMAGE_REPO}:${IMAGE_TAG} . --push"
+                    sh "docker buildx build -t ${APP_REPO}/${APP_NAME}:${IMAGE_TAG} . --push"
                 }
+                container("helm") {
+                    sh "helm package chart --version ${VERSION} --app-version ${IMAGE_TAG} --dependency-update"
+                    sh "helm push ${env.APP_NAME}-${VERSION}.tgz oci://${APP_REPO}/charts"
+                }
+            }
+        }
+
+        stage('Sync with gitops repo') {
+            environment {
+                GITHUB_TOKEN: credentials('gitops-trigger-token')
+            }
+            steps {
+                container("gh") {
+                    sh "gh workflow run sync --repo myspotontheweb/argocd-workloads-demo"
+                }
+
             }
         }
     }
